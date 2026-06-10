@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getProductBySlug } from "@/data/menu";
+import { getProductBySlug } from "@/lib/menu-db";
 import { buildOrderWhatsAppUrl, generateOrderNumber } from "@/lib/whatsapp";
+import { validateCoupon, incrementCouponUsage } from "@/lib/coupons";
 import type { CreateOrderPayload, CreateOrderResponse } from "@/types/cart";
 
 export const runtime = "nodejs";
@@ -47,7 +48,7 @@ export async function POST(req: Request): Promise<NextResponse<CreateOrderRespon
   const verifiedItems: typeof payload.items = [];
 
   for (const it of payload.items) {
-    const product = getProductBySlug(it.slug);
+    const product = await getProductBySlug(it.slug);
     if (!product) {
       return NextResponse.json(
         { ok: false, error: `Item no longer available: ${it.name}` },
@@ -67,7 +68,20 @@ export async function POST(req: Request): Promise<NextResponse<CreateOrderRespon
   }
 
   const deliveryFee = Math.max(0, Math.floor(payload.deliveryFee ?? 0));
-  const verifiedTotal = verifiedSubtotal + deliveryFee;
+
+  // ----- Re-validate coupon server-side (anti-tampering) -----
+  let discount = 0;
+  let appliedCoupon: string | null = null;
+  if (payload.couponCode && payload.couponCode.trim()) {
+    const v = await validateCoupon(payload.couponCode, verifiedSubtotal);
+    if (v.ok) {
+      discount = v.discount;
+      appliedCoupon = v.code;
+    }
+    // Silent fallthrough: if coupon now invalid, order goes through at full price.
+  }
+
+  const verifiedTotal = Math.max(0, verifiedSubtotal - discount) + deliveryFee;
 
   // ----- Try to persist to DB. If DATABASE_URL not set or fails, still return WA url. -----
   let orderNumber = generateOrderNumber();
@@ -90,6 +104,8 @@ export async function POST(req: Request): Promise<NextResponse<CreateOrderRespon
             notes: c.notes?.trim() || null,
             subtotal: verifiedSubtotal,
             deliveryFee,
+            discount,
+            couponCode: appliedCoupon,
             total: verifiedTotal,
             items: {
               create: verifiedItems.map((i) => ({
@@ -119,6 +135,11 @@ export async function POST(req: Request): Promise<NextResponse<CreateOrderRespon
     }
   }
 
+  // Bump coupon usage on success (best-effort).
+  if (savedToDb && appliedCoupon) {
+    await incrementCouponUsage(appliedCoupon);
+  }
+
   // ----- Build the WhatsApp URL with the prefilled order -----
   const whatsappUrl = buildOrderWhatsAppUrl({
     orderNumber,
@@ -126,6 +147,8 @@ export async function POST(req: Request): Promise<NextResponse<CreateOrderRespon
     items: verifiedItems,
     subtotal: verifiedSubtotal,
     deliveryFee,
+    discount,
+    couponCode: appliedCoupon ?? undefined,
     total: verifiedTotal,
   });
 

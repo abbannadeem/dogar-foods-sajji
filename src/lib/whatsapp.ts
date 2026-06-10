@@ -16,9 +16,20 @@ export function buildOrderWhatsAppUrl(opts: {
   items: CartItem[];
   subtotal: number;
   deliveryFee: number;
+  discount?: number;
+  couponCode?: string;
   total: number;
 }): string {
-  const { orderNumber, customer, items, subtotal, deliveryFee, total } = opts;
+  const {
+    orderNumber,
+    customer,
+    items,
+    subtotal,
+    deliveryFee,
+    discount = 0,
+    couponCode,
+    total,
+  } = opts;
   const branch = BRANCHES.find((b) => b.id === customer.branchId) ?? BRANCHES[0];
 
   const itemsBlock = items
@@ -49,6 +60,9 @@ export function buildOrderWhatsAppUrl(opts: {
     ``,
     `💰 *Summary*`,
     `Subtotal: ${formatPKR(subtotal)}`,
+    discount > 0
+      ? `Discount${couponCode ? ` (${couponCode})` : ""}: -${formatPKR(discount)}`
+      : null,
     `Delivery: ${deliveryFee === 0 ? "Free" : formatPKR(deliveryFee)}`,
     `*Total: ${formatPKR(total)}*`,
     ``,

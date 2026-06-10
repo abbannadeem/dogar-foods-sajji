@@ -37,6 +37,7 @@ export type CreateOrderPayload = {
   items: CartItem[];
   subtotal: number;
   deliveryFee: number;
+  couponCode?: string;
   total: number;
 };
 

@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { getFeaturedProducts } from "@/data/menu";
+import { getFeaturedProducts } from "@/lib/menu-db";
 import ProductCard from "./ProductCard";
 
-export default function FeaturedItems() {
-  const products = getFeaturedProducts(6);
+export default async function FeaturedItems() {
+  const products = await getFeaturedProducts(6);
+  if (products.length === 0) return null;
+
   return (
     <section className="container-x py-16 md:py-20">
       <div className="flex items-end justify-between mb-10 gap-6 flex-wrap">

@@ -2,18 +2,23 @@
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { CATEGORIES } from "@/data/categories";
-import { PRODUCTS } from "@/data/menu";
+import type { Category, Product } from "@/types";
 import ProductCard from "./ProductCard";
 
-export default function MenuPageClient() {
+export default function MenuPageClient({
+  categories,
+  products,
+}: {
+  categories: Category[];
+  products: Product[];
+}) {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") ?? "all";
   const [active, setActive] = useState<string>(initialCategory);
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
-    let items = PRODUCTS;
+    let items = products;
     if (active !== "all") items = items.filter((p) => p.category === active);
     if (query.trim()) {
       const q = query.toLowerCase();
@@ -24,12 +29,12 @@ export default function MenuPageClient() {
       );
     }
     return items;
-  }, [active, query]);
+  }, [active, query, products]);
 
   const activeCategoryName =
     active === "all"
       ? null
-      : CATEGORIES.find((c) => c.id === active)?.name.replace(" Corner", "");
+      : categories.find((c) => c.id === active)?.name.replace(" Corner", "");
 
   return (
     <>
@@ -60,7 +65,7 @@ export default function MenuPageClient() {
                 onClick={() => setActive("all")}
                 label="All"
               />
-              {CATEGORIES.map((c) => (
+              {categories.map((c) => (
                 <Chip
                   key={c.id}
                   active={active === c.id}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useCart } from "@/lib/cart-context";
 import { formatPKR } from "@/data/menu";
 import { BRANCHES } from "@/lib/constants";
+import { previewCouponAction } from "@/app/admin/coupons/actions";
 import type { CheckoutForm, CreateOrderPayload, CreateOrderResponse } from "@/types/cart";
 
 const PAYMENT_OPTIONS: Array<{
@@ -28,6 +29,14 @@ export default function CheckoutPageClient() {
   const router = useRouter();
   const { items, subtotal, clear, isHydrated } = useCart();
   const [submitting, setSubmitting] = useState(false);
+  const [couponInput, setCouponInput] = useState("");
+  const [coupon, setCoupon] = useState<{
+    code: string;
+    discount: number;
+    message: string;
+  } | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [validatingCoupon, startValidate] = useTransition();
 
   const [form, setForm] = useState<CheckoutForm>({
     customerName: "",
@@ -89,12 +98,14 @@ export default function CheckoutPageClient() {
     }
 
     setSubmitting(true);
-    const total = subtotal + DELIVERY_FEE;
+    const discount = coupon?.discount ?? 0;
+    const total = Math.max(0, subtotal - discount) + DELIVERY_FEE;
     const payload: CreateOrderPayload = {
       customer: form,
       items,
       subtotal,
       deliveryFee: DELIVERY_FEE,
+      couponCode: coupon?.code,
       total,
     };
 
@@ -309,11 +320,83 @@ export default function CheckoutPageClient() {
               </li>
             ))}
           </ul>
+          {/* Promo code */}
+          <div className="border-t border-border pt-3 mb-3">
+            {coupon ? (
+              <div className="flex items-center justify-between gap-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-2">
+                <div className="text-xs">
+                  <div className="font-bold text-emerald-400 tabular-nums uppercase tracking-wider">
+                    {coupon.code}
+                  </div>
+                  <div className="text-emerald-200/80">{coupon.message}</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCoupon(null);
+                    setCouponInput("");
+                    setCouponError(null);
+                  }}
+                  className="text-xs text-emerald-300 hover:text-white"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Promo code"
+                  value={couponInput}
+                  onChange={(e) => {
+                    setCouponInput(e.target.value.toUpperCase());
+                    setCouponError(null);
+                  }}
+                  className="input flex-1 uppercase tracking-wider tabular-nums"
+                  maxLength={40}
+                  aria-label="Promo code"
+                />
+                <button
+                  type="button"
+                  disabled={!couponInput.trim() || validatingCoupon}
+                  onClick={() => {
+                    setCouponError(null);
+                    startValidate(async () => {
+                      const res = await previewCouponAction(couponInput, subtotal);
+                      if (!res.ok) {
+                        setCouponError(res.error);
+                        return;
+                      }
+                      setCoupon({
+                        code: res.code,
+                        discount: res.discount,
+                        message: res.message,
+                      });
+                      toast.success(`Coupon applied — ${res.message}`);
+                    });
+                  }}
+                  className="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold uppercase tracking-wider disabled:opacity-50 transition"
+                >
+                  {validatingCoupon ? "..." : "Apply"}
+                </button>
+              </div>
+            )}
+            {couponError && (
+              <div className="text-xs text-brand-500 mt-1.5">{couponError}</div>
+            )}
+          </div>
+
           <dl className="space-y-2 text-sm border-t border-border pt-3">
             <div className="flex justify-between">
               <dt className="text-muted">Subtotal</dt>
               <dd className="font-bold tabular-nums">{formatPKR(subtotal)}</dd>
             </div>
+            {coupon && (
+              <div className="flex justify-between text-emerald-400">
+                <dt>Discount ({coupon.code})</dt>
+                <dd className="tabular-nums">−{formatPKR(coupon.discount)}</dd>
+              </div>
+            )}
             <div className="flex justify-between">
               <dt className="text-muted">Delivery</dt>
               <dd className="tabular-nums">
@@ -323,7 +406,7 @@ export default function CheckoutPageClient() {
             <div className="border-t border-border pt-2 flex justify-between text-lg">
               <dt className="font-display font-bold">Total</dt>
               <dd className="font-display font-extrabold text-brand-500 tabular-nums">
-                {formatPKR(subtotal + DELIVERY_FEE)}
+                {formatPKR(Math.max(0, subtotal - (coupon?.discount ?? 0)) + DELIVERY_FEE)}
               </dd>
             </div>
           </dl>

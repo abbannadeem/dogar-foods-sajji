@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import MenuPageClient from "@/components/MenuPageClient";
+import { getAllCategories, getAvailableProducts } from "@/lib/menu-db";
 
 export const metadata: Metadata = {
   title: "Menu",
@@ -8,7 +9,16 @@ export const metadata: Metadata = {
     "Full menu — Sajji, Karahi, BBQ, Tandoor, Fish and more. Authentic Pakistani dishes with PKR pricing.",
 };
 
-export default function MenuPage() {
+// Always pull the latest from DB on each request. revalidatePath in admin
+// actions also fires, so cached responses get blown away on edits.
+export const dynamic = "force-dynamic";
+
+export default async function MenuPage() {
+  const [categories, products] = await Promise.all([
+    getAllCategories(),
+    getAvailableProducts(),
+  ]);
+
   return (
     <>
       <section className="relative bg-black border-b border-border py-14 md:py-20 overflow-hidden">
@@ -28,7 +38,8 @@ export default function MenuPage() {
             <br className="hidden sm:block" /> No Shortcuts.
           </h1>
           <p className="text-white/70 mt-5 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
-            Everything made to order. Everything pulled hot off the flame, the wok, or the clay oven. Filter by corner, search by dish.
+            Everything made to order. Everything pulled hot off the flame, the
+            wok, or the clay oven. Filter by corner, search by dish.
           </p>
         </div>
       </section>
@@ -40,7 +51,7 @@ export default function MenuPage() {
           </div>
         }
       >
-        <MenuPageClient />
+        <MenuPageClient categories={categories} products={products} />
       </Suspense>
     </>
   );

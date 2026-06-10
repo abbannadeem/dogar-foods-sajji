@@ -35,6 +35,30 @@ enum BadgeKind {
   CHEFS_CHOICE
 }
 
+enum CouponType {
+  FIXED
+  PERCENT
+}
+
+model Coupon {
+  id          String     @id @default(cuid())
+  code        String     @unique
+  type        CouponType
+  value       Int
+  minOrder    Int        @default(0)
+  maxDiscount Int?
+  validFrom   DateTime?
+  validUntil  DateTime?
+  usageLimit  Int?
+  usedCount   Int        @default(0)
+  active      Boolean    @default(true)
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([code, active])
+}
+
 model Category {
   id           String    @id
   name         String
@@ -84,6 +108,8 @@ model Order {
   status        OrderStatus   @default(PENDING)
   subtotal      Int
   deliveryFee   Int           @default(0)
+  discount      Int           @default(0)
+  couponCode    String?
   total         Int
   items         OrderItem[]
   createdAt     DateTime      @default(now())

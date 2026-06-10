@@ -2,16 +2,24 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { PRODUCTS, getProductBySlug, formatPKR } from "@/data/menu";
-import { CATEGORY_MAP } from "@/data/categories";
+import { formatPKR } from "@/data/menu-static";
+import {
+  getAllProducts,
+  getCategoryMap,
+  getProductBySlug,
+  getProductsByCategory,
+} from "@/lib/menu-db";
 import { PRIMARY_WHATSAPP } from "@/lib/constants";
 import ProductCard from "@/components/ProductCard";
 import AddToCartButton from "@/components/AddToCartButton";
 
+export const dynamic = "force-dynamic";
+
 type Params = { slug: string };
 
 export async function generateStaticParams(): Promise<Params[]> {
-  return PRODUCTS.map((p) => ({ slug: p.slug }));
+  const products = await getAllProducts();
+  return products.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -20,7 +28,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return { title: "Not Found" };
   return {
     title: product.name,
@@ -40,13 +48,15 @@ export default async function ProductPage({
   params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const category = CATEGORY_MAP[product.category];
-  const related = PRODUCTS.filter(
-    (p) => p.category === product.category && p.id !== product.id
-  ).slice(0, 4);
+  const categoryMap = await getCategoryMap();
+  const category = categoryMap[product.category];
+  if (!category) notFound();
+
+  const all = await getProductsByCategory(product.category);
+  const related = all.filter((p) => p.id !== product.id).slice(0, 4);
 
   const hasImage = product.image?.startsWith("http");
 
