@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NAV_LINKS, BRANCHES } from "@/lib/constants";
 import Logo from "./Logo";
+import CartIcon from "./CartIcon";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -80,12 +81,18 @@ export default function Header() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-2">
+          <CartIcon />
           <Link
             href="/menu"
             className="btn-primary text-sm"
           >
             Order Now
           </Link>
+        </div>
+
+        {/* Mobile cart icon (visible next to hamburger) */}
+        <div className="lg:hidden flex items-center gap-1">
+          <CartIcon />
         </div>
 
         <button

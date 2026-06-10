@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Product } from "@/types";
 import { formatPKR } from "@/data/menu";
+import AddToCartButton from "./AddToCartButton";
 
 const BADGE_STYLES: Record<string, string> = {
   Bestseller: "bg-brand-600/95 text-white ring-1 ring-brand-500/50",
@@ -83,10 +84,15 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
 
         {product.spiceLevel && product.spiceLevel >= 2 && (
-          <div className="absolute bottom-3 right-3 rounded-full bg-black/65 backdrop-blur-sm px-2 py-1.5 ring-1 ring-white/10">
+          <div className="absolute bottom-3 left-3 rounded-full bg-black/65 backdrop-blur-sm px-2 py-1.5 ring-1 ring-white/10">
             <SpiceDots level={product.spiceLevel} />
           </div>
         )}
+
+        {/* Quick add-to-cart — floats over image on hover */}
+        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
+          <AddToCartButton product={product} variant="icon" />
+        </div>
       </div>
 
       <div className="p-4">

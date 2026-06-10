@@ -6,6 +6,7 @@ import { PRODUCTS, getProductBySlug, formatPKR } from "@/data/menu";
 import { CATEGORY_MAP } from "@/data/categories";
 import { PRIMARY_WHATSAPP } from "@/lib/constants";
 import ProductCard from "@/components/ProductCard";
+import AddToCartButton from "@/components/AddToCartButton";
 
 type Params = { slug: string };
 
@@ -198,13 +199,7 @@ export default async function ProductPage({
 
             {/* CTAs */}
             <div className="mt-8 flex flex-wrap gap-3">
-              <button
-                disabled
-                className="btn-primary opacity-50 cursor-not-allowed"
-                title="Cart coming in Phase 2"
-              >
-                Add to Cart (Phase 2)
-              </button>
+              <AddToCartButton product={product} size="lg" />
               <a
                 href={`https://wa.me/${PRIMARY_WHATSAPP}?text=${waMsg}`}
                 target="_blank"
