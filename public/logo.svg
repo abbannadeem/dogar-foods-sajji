@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 230" role="img" aria-label="Dogar Foods &amp; Sajji">
+  <!-- ===== ICON: cutlery + plate ===== -->
+  <g transform="translate(0 0)">
+    <!-- FORK (left) -->
+    <g fill="#d92027">
+      <rect x="62" y="14" width="5" height="36" rx="1.5"/>
+      <rect x="71" y="14" width="5" height="36" rx="1.5"/>
+      <rect x="80" y="14" width="5" height="36" rx="1.5"/>
+      <rect x="89" y="14" width="5" height="36" rx="1.5"/>
+      <rect x="60" y="46" width="36" height="10" rx="3"/>
+      <path d="M71 56 H85 L83 132 Q78 138 73 132 Z"/>
+    </g>
+
+    <!-- KNIFE (middle) -->
+    <g fill="#d92027">
+      <path d="M100 10 L107 64 L93 64 Z"/>
+      <path d="M95 62 H105 L103 132 Q100 138 97 132 Z"/>
+    </g>
+
+    <!-- SPOON (right) -->
+    <g fill="#d92027">
+      <ellipse cx="130" cy="34" rx="14" ry="24"/>
+      <rect x="126" y="54" width="8" height="14" rx="2"/>
+      <path d="M126 66 H134 L132 132 Q130 138 128 132 Z"/>
+    </g>
+
+    <!-- PLATE: two open arcs -->
+    <g fill="none" stroke="#d92027" stroke-linecap="round">
+      <path d="M52 138 Q100 120 148 138" stroke-width="3"/>
+      <path d="M44 144 Q100 178 156 144" stroke-width="3.5"/>
+    </g>
+  </g>
+
+  <!-- ===== WORDMARK ===== -->
+  <g text-anchor="middle" font-family="'Arial Black','Helvetica Neue',Impact,sans-serif">
+    <text x="100" y="200" font-weight="900" font-size="36" fill="#d92027" letter-spacing="1.5">DOGAR</text>
+    <text x="100" y="220" font-weight="800" font-size="13" fill="currentColor" letter-spacing="2.5">FOODS &amp; SAJJI</text>
+  </g>
+</svg>
