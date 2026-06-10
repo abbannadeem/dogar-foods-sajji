@@ -27,6 +27,48 @@ enum PaymentMethod {
   SAFEPAY
 }
 
+enum BadgeKind {
+  NONE
+  BESTSELLER
+  NEW
+  SPICY
+  CHEFS_CHOICE
+}
+
+model Category {
+  id           String    @id
+  name         String
+  description  String
+  emoji        String    @default("🍽️")
+  displayOrder Int       @default(0)
+  products     Product[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Product {
+  id              String     @id
+  slug            String     @unique
+  name            String
+  category        Category   @relation(fields: [categoryId], references: [id])
+  categoryId      String
+  description     String
+  longDescription String?
+  price           Int
+  oldPrice        Int?
+  image           String     @default("")
+  badge           BadgeKind  @default(NONE)
+  servings        String?
+  spiceLevel      Int?
+  available       Boolean    @default(true)
+  displayOrder    Int        @default(0)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([categoryId, available, displayOrder])
+  @@index([available, badge])
+}
+
 model Order {
   id            String        @id @default(cuid())
   orderNumber   String        @unique

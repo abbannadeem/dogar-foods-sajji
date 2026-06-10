@@ -13,6 +13,7 @@ type NavLink = {
 const LINKS: NavLink[] = [
   { href: "/admin", label: "Dashboard", icon: DashboardIcon, exact: true },
   { href: "/admin/orders", label: "Orders", icon: OrdersIcon },
+  { href: "/admin/menu", label: "Menu", icon: MenuIcon },
   { href: "/admin/customers", label: "Customers", icon: UsersIcon },
 ];
 
@@ -96,6 +97,24 @@ function OrdersIcon({ className = "" }: { className?: string }) {
       <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
       <line x1="3" y1="6" x2="21" y2="6" />
       <path d="M16 10a4 4 0 0 1-8 0" />
+    </svg>
+  );
+}
+
+function MenuIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3 11l18-5v12L3 14v-3z" />
+      <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
     </svg>
   );
 }
