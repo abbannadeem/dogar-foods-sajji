@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import BranchCards from "@/components/BranchCards";
-import { SITE } from "@/lib/constants";
+import { SITE, PRIMARY_WHATSAPP } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Our Branches",
@@ -91,6 +91,66 @@ export default function BranchesPage() {
       </section>
 
       <BranchCards />
+
+      {/* COMING SOON — SHADBAGH BRANCH 4 */}
+      <section className="container-x py-12 md:py-16">
+        <div className="relative overflow-hidden rounded-3xl border border-dashed border-brand-600/40 bg-gradient-to-br from-brand-900/30 via-black to-black p-8 md:p-12">
+          {/* Glow accents */}
+          <div className="absolute -top-24 -right-20 w-[28rem] h-[28rem] bg-brand-600/15 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute -bottom-24 -left-20 w-[22rem] h-[22rem] bg-accent-500/10 rounded-full blur-[110px] pointer-events-none" />
+
+          <div className="relative grid md:grid-cols-[1fr_auto] gap-8 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-600/15 border border-brand-600/40 text-[10px] uppercase tracking-[0.25em] text-brand-400 font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
+                Expanding · Branch 4
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black mt-4 leading-[1.05]">
+                Shadbagh, Lahore <br className="hidden sm:block" />
+                <span className="text-brand-500">— Coming Soon</span>
+              </h2>
+              <p className="text-white/75 mt-4 max-w-xl text-base sm:text-lg leading-relaxed">
+                Tajpura ke baad ab Shadbagh. Same flame, same recipes, same
+                late-night kitchen. Stay tuned for the opening — early
+                subscribers get launch-day discounts.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/contact" className="btn-primary text-sm">
+                  Get launch updates
+                </Link>
+                <a
+                  href={`https://wa.me/${PRIMARY_WHATSAPP}?text=${encodeURIComponent(
+                    "Salaam! I want updates on the new Shadbagh branch."
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary text-sm"
+                >
+                  Notify me on WhatsApp
+                </a>
+              </div>
+            </div>
+
+            {/* Right block: faux branch card with coming-soon overlay */}
+            <div className="relative">
+              <div className="w-56 sm:w-64 aspect-square rounded-3xl bg-gradient-to-br from-brand-700/40 via-brand-900/40 to-black border border-brand-600/30 grid place-items-center shadow-warm">
+                <div className="text-center">
+                  <div className="text-6xl sm:text-7xl mb-2">📍</div>
+                  <div className="font-display text-2xl font-black uppercase text-white">
+                    Shadbagh
+                  </div>
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-brand-500 font-bold mt-1">
+                    Branch 4
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -top-3 -right-3 rotate-6 bg-brand-600 text-white text-[10px] uppercase tracking-[0.18em] font-extrabold px-3 py-1.5 rounded-full shadow-warm border-2 border-black">
+                Coming Soon
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* AREAS SERVED */}
       <section className="container-x py-16 md:py-20">
