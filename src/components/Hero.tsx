@@ -95,7 +95,7 @@ export default function Hero() {
             alt="Whole roasted chicken Sajji"
             badge="Bestseller"
             name="Full Chicken Sajji"
-            price={1400}
+            price={2499}
           />
 
           {/* Card 2: Karahi (bottom) */}
@@ -105,7 +105,7 @@ export default function Hero() {
             alt="Mutton karahi in wok"
             badge="Chef's Choice"
             name="Mutton Karahi"
-            price={2200}
+            price={3999}
           />
         </div>
       </div>

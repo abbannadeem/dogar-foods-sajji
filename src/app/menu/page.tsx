@@ -6,7 +6,7 @@ import { getAllCategories, getAvailableProducts } from "@/lib/menu-db";
 export const metadata: Metadata = {
   title: "Menu",
   description:
-    "Full menu — Sajji, Karahi, BBQ, Tandoor, Fish and more. Authentic Pakistani dishes with PKR pricing.",
+    "Full menu — Sajji, Karahi, BBQ, Tandoor, Fish and more. Authentic Pakistani dishes — demo USD pricing.",
 };
 
 // Always pull the latest from DB on each request. revalidatePath in admin

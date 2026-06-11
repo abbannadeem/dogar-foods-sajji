@@ -47,7 +47,7 @@ export async function validateCoupon(
   if (subtotal < coupon.minOrder) {
     return {
       ok: false,
-      error: `Min order Rs ${coupon.minOrder.toLocaleString("en-PK")} required`,
+      error: `Min order $${(coupon.minOrder / 100).toFixed(2)} required`,
     };
   }
 
@@ -64,7 +64,7 @@ export async function validateCoupon(
 
   const message =
     coupon.type === "FIXED"
-      ? `Rs ${coupon.value.toLocaleString("en-PK")} off`
+      ? `$${(coupon.value / 100).toFixed(2)} off`
       : `${coupon.value}% off`;
 
   return { ok: true, code, type: coupon.type, discount, message };

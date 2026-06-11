@@ -409,6 +409,11 @@ export function getFeaturedProducts(limit = 8): Product[] {
   return PRODUCTS_STATIC.filter((p) => p.badge).slice(0, limit);
 }
 
+/**
+ * Format a price stored as cents into a USD demo display string.
+ * Function name kept as `formatPKR` for backwards compatibility with the rest
+ * of the codebase — only the output format changed (demo currency switch).
+ */
 export function formatPKR(amount: number): string {
-  return `Rs ${amount.toLocaleString("en-PK")}`;
+  return `$${(amount / 100).toFixed(2)}`;
 }

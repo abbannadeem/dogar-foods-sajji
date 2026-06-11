@@ -42,3 +42,4 @@ next-env.d.ts
 
 # Claude Code workspace metadata (not part of the project)
 .claude/
+portfolio/
