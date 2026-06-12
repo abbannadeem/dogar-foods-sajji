@@ -8,7 +8,7 @@ import { chromium, devices } from "playwright";
 import path from "path";
 import fs from "fs";
 
-const BASE = "https://dogar-foods-sajji.vercel.app";
+const BASE = process.env.PORTFOLIO_BASE || "http://localhost:3000";
 const ROOT = path.join(__dirname, "..", "portfolio");
 const DESKTOP_DIR = path.join(ROOT, "raw", "desktop");
 const MOBILE_DIR = path.join(ROOT, "raw", "mobile");
